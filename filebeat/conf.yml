@@ -2,9 +2,9 @@ filebeat.prospectors:
 
 - input_type: log
 
-  # Paths that should be crawled and fetched. Glob based paths.
+  # Only process logs for pods in the main namespace
   paths:
-    - /var/log/containers/*.log
+    - /var/log/containers/*_main_*.log
 
   json.message_key: msg
   json.keys_under_root: true
