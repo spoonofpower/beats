@@ -84,10 +84,10 @@ func (p *ProspectorLog) getFiles() map[string]os.FileInfo {
 				continue
 			}
 			// Check if file is symlink
-			if fileinfo.Mode()&os.ModeSymlink != 0 {
-				logp.Debug("prospector", "File %s skipped as it is a symlink.", file)
-				continue
-			}
+			//if fileinfo.Mode()&os.ModeSymlink != 0 {
+			//	logp.Debug("prospector", "File %s skipped as it is a symlink.", file)
+			//	continue
+			//}
 
 			if fileinfo.IsDir() {
 				logp.Debug("prospector", "Skipping directory: %s", file)

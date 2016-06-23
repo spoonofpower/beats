@@ -18,6 +18,7 @@ type File struct {
 }
 
 // Check that the file isn't a symlink, mode is regular or file is nil
+// mitton: change to allow symlink
 func (f *File) IsRegularFile() bool {
 	if f.File == nil {
 		logp.Critical("Harvester: BUG: f arg is nil")
@@ -30,7 +31,7 @@ func (f *File) IsRegularFile() bool {
 		return false
 	}
 
-	if !info.Mode().IsRegular() {
+	if !(info.Mode().IsRegular() || info.Mode()&os.ModeSymlink == os.ModeSymlink) {
 		logp.Warn("Harvester: not a regular file: %q %s", info.Mode(), info.Name())
 		return false
 	}
