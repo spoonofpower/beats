@@ -3,6 +3,7 @@ package harvester
 import (
 	"errors"
 	"os"
+	"regexp"
 
 	"golang.org/x/text/transform"
 
@@ -11,6 +12,8 @@ import (
 	"github.com/elastic/beats/filebeat/input"
 	"github.com/elastic/beats/libbeat/logp"
 )
+
+var logNameRegex = regexp.MustCompile(`.*/(?P<pod_name>[^_]+)_(?P<namespace>[^_]+)_(?P<container_name>.+)-(?P<docker_id>[a-z0-9]{64})\.log$`)
 
 // Log harvester reads files line by line and sends events to the defined output
 func (h *Harvester) Harvest() {
@@ -78,6 +81,16 @@ func (h *Harvester) Harvest() {
 		event := h.createEvent()
 
 		if h.shouldExportLine(text) {
+
+			res := logNameRegex.FindStringSubmatch(h.Path)
+			if res != nil {
+				jsonFields["kubernetes"] = map[string]string{
+					"pod_name":       res[1],
+					"namespace":      res[2],
+					"container_name": res[3],
+					"docker_id":      res[4],
+				}
+			}
 
 			event.ReadTime = ts
 			event.Bytes = bytesRead
