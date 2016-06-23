@@ -2,14 +2,17 @@
   "mappings": {
     "_default_": {
       "_all": {
-        "norms": false
+        "norms": {
+          "enabled": false
+        }
       },
       "dynamic_templates": [
         {
           "fields": {
             "mapping": {
               "ignore_above": 1024,
-              "type": "keyword"
+              "type": "string",
+              "index": "not_analyzed"
             },
             "match_mapping_type": "string",
             "path_match": "fields.*"
@@ -24,43 +27,63 @@
           "properties": {
             "hostname": {
               "ignore_above": 1024,
-              "type": "keyword"
+              "type": "string",
+              "index": "not_analyzed"
             },
             "name": {
               "ignore_above": 1024,
-              "type": "keyword"
+              "type": "string",
+              "index": "not_analyzed"
             }
           }
         },
         "input_type": {
           "ignore_above": 1024,
-          "type": "keyword"
+          "type": "string",
+          "index": "not_analyzed"
         },
         "message": {
-          "norms": false,
-          "type": "text"
+          "norms": {
+            "enabled": false
+          },
+          "type": "string"
         },
         "offset": {
           "type": "long"
         },
         "source": {
           "ignore_above": 1024,
-          "type": "keyword"
+          "type": "string",
+          "index": "not_analyzed"
         },
         "tags": {
           "ignore_above": 1024,
-          "type": "keyword"
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "ts": {
+          "type": "long",
+          "index": "not_analyzed"
         },
         "type": {
           "ignore_above": 1024,
-          "type": "keyword"
+          "type": "string",
+          "index": "not_analyzed"
         }
       }
     }
   },
   "order": 0,
   "settings": {
-    "index.refresh_interval": "5s"
+    "index": {
+      "refresh_interval": "5s",
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    },
+    "mapping": {
+      "ignore_malformed": true
+    }
   },
   "template": "filebeat-*"
 }
+
