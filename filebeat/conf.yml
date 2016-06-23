@@ -1,0 +1,18 @@
+filebeat.prospectors:
+
+- input_type: log
+
+  # Paths that should be crawled and fetched. Glob based paths.
+  paths:
+    - /var/log/containers/*.log
+
+  json.message_key: msg
+  json.keys_under_root: true
+  json.overwrite_keys: true
+  json.add_error_key: true
+
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch-logging.kube-system.svc.dev.cluster:9200"]
+
+filebeat.registry_file: /var/log/filebeat-pos.json
