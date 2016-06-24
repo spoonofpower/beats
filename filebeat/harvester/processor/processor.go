@@ -123,6 +123,11 @@ func (p *JSONProcessor) decodeJSON(text []byte) ([]byte, common.MapStr) {
 		return text, jsonFields
 	}
 
+	logp.Err("================")
+	logp.Err("mitton: text: %v", string(text))
+	logp.Err("mitton: jsonFields: %v", jsonFields)
+	logp.Err("================")
+
 	if len(p.cfg.MessageKey) == 0 {
 		return []byte(""), jsonFields
 	}
