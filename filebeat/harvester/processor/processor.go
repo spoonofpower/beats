@@ -123,21 +123,29 @@ func (p *JSONProcessor) decodeJSON(text []byte) ([]byte, common.MapStr) {
 		return text, jsonFields
 	}
 
-	logp.Err("================")
-	logp.Err("mitton: text: %v", string(text))
-	logp.Err("mitton: jsonFields: %v", jsonFields)
-	logp.Err("================")
-
 	if len(p.cfg.MessageKey) == 0 {
 		return []byte(""), jsonFields
 	}
 
 	textValue, ok := jsonFields[p.cfg.MessageKey]
 	if !ok {
-		if p.cfg.AddErrorKey {
-			jsonFields[jsonErrorKey] = fmt.Sprintf("Key '%s' not found", p.cfg.MessageKey)
+		if innerText, ok := jsonFields[p.cfg.OuterMessageKey]; ok {
+			// It's possible to have an outer layer of JSON where a field
+			// contains a string that's JSON which contains the actual message
+			// field.  For example:
+			//
+			// {"log":"{\"level\":\"info\",\"msg\":\"Data pumps done.\",\"time\":\"2016-06-15T18:41:17.021573581Z\",\"ts\":\"1466016077021573581\"}\n","stream":"stderr","time":"2016-06-15T18:41:17.021800247Z"}
+			//
+			// Here the message key is log.msg
+			innerTextValue, innerJSONFields := p.decodeJSON(innerText.([]byte))
+			jsonFields.Update(innerJSONFields)
+			return innerTextValue, jsonFields
+		} else {
+			if p.cfg.AddErrorKey {
+				jsonFields[jsonErrorKey] = fmt.Sprintf("Key '%s' not found", p.cfg.MessageKey)
+			}
+			return []byte(""), jsonFields
 		}
-		return []byte(""), jsonFields
 	}
 
 	textString, ok := textValue.(string)
