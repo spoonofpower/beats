@@ -14,6 +14,6 @@ filebeat.prospectors:
 
 
 output.elasticsearch:
-  hosts: ["http://elasticsearch-logging.kube-system.svc.dev.cluster:9200"]
+  hosts: ["http://es-logging:9200"]
 
 filebeat.registry_file: /var/log/filebeat-pos.json
